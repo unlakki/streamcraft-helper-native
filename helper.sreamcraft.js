@@ -71,171 +71,7 @@
             createElement('div', {
               classes: ['manage-list'],
               childs: [
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть панель рейтинга и VIP' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
-
-                          const panel = qs('.contribution-guard');
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            panel.style.display = '';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          panel.style.display = 'none';
-                        },
-                      },
-                    }),
-                  ],
-                }),
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть панель слева' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0 || !disabled.hideLeftPanel) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
-
-                          const personalWrapper = qs('.personal-wrapper');
-                          const sideBar = qs('.side-bar');
-                          const playerBar = qs('.player-bar');
-                          const chatLists = qs('.chat-lists ');
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            personalWrapper.style.paddingLeft = '';
-                            chatLists.style.paddingRight = '';
-                            sideBar.style.display = '';
-                            playerBar.style.height = '';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          personalWrapper.style.paddingLeft = '26px';
-                          chatLists.style.paddingRight = '0';
-                          sideBar.style.display = 'none';
-                          playerBar.style.height = 'calc((900vw - 4585px)/16)';
-                        },
-                      },
-                    }),
-                  ],
-                }),
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Закрепить плеер' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            document.body.style.overflow = 'auto';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          document.body.style.overflow = 'hidden';
-                        },
-                      },
-                    }),
-                  ],
-                }),
-              ],
-            }),
-            createElement('h4', { text: 'Автоматизация' }),
-            createElement('div', {
-              classes: ['manage-list'],
-              childs: [
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Лайки' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            clearInterval(likesInterval);
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          likesInterval = setInterval(() => document.querySelector('.like').click(), 1);
-                        },
-                      },
-                    }),
-                  ],
-                }),
-              ],
-            }),
-            createElement('h4', { text: 'Experimental' }),
-            createElement('div', {
-              classes: ['manage-list'],
-              childs: [
+                // Режим кинотеатра
                 createElement('p', {
                   childs: [
                     createElement('label', {
@@ -301,6 +137,43 @@
                     }),
                   ],
                 }),
+                // Закрепить плеер
+                createElement('p', {
+                  childs: [
+                    createElement('label', {
+                      classes: ['el-checkbox', 'manage-item'],
+                      childs: [
+                        createElement('span', {
+                          classes: ['el-checkbox__input'],
+                          childs: [
+                            createElement('span', { classes: ['el-checkbox__inner'] }),
+                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
+                          ],
+                        }),
+                        createElement('span', { classes: ['el-checkbox__label'], text: 'Закрепить плеер' }),
+                      ],
+                      events: {
+                        mousedown: (e) => {
+                          if (e.button !== 0) return;
+                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+
+                          if (label.classList.contains('is-checked')) {
+                            label.classList.remove('is-checked');
+                            label.children[0].classList.remove('is-checked');
+
+                            document.body.style.overflow = 'auto';
+                            return;
+                          }
+                          label.classList.add('is-checked');
+                          label.children[0].classList.add('is-checked');
+
+                          document.body.style.overflow = 'hidden';
+                        },
+                      },
+                    }),
+                  ],
+                }),
+                // Анимация лайков
                 createElement('p', {
                   childs: [
                     createElement('label', {
@@ -340,6 +213,140 @@
                     }),
                   ],
                 }),
+                // Скрыть панель рейтинга и VIP
+                createElement('p', {
+                  childs: [
+                    createElement('label', {
+                      classes: ['el-checkbox', 'manage-item'],
+                      childs: [
+                        createElement('span', {
+                          classes: ['el-checkbox__input'],
+                          childs: [
+                            createElement('span', { classes: ['el-checkbox__inner'] }),
+                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
+                          ],
+                        }),
+                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть панель рейтинга и VIP' }),
+                      ],
+                      events: {
+                        mousedown: (e) => {
+                          if (e.button !== 0) return;
+                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+
+                          const panel = qs('.contribution-guard');
+
+                          if (label.classList.contains('is-checked')) {
+                            label.classList.remove('is-checked');
+                            label.children[0].classList.remove('is-checked');
+
+                            panel.style.display = '';
+                            return;
+                          }
+                          label.classList.add('is-checked');
+                          label.children[0].classList.add('is-checked');
+
+                          panel.style.display = 'none';
+                        },
+                      },
+                    }),
+                  ],
+                }),
+                // Скрыть панель слева
+                createElement('p', {
+                  childs: [
+                    createElement('label', {
+                      classes: ['el-checkbox', 'manage-item'],
+                      childs: [
+                        createElement('span', {
+                          classes: ['el-checkbox__input'],
+                          childs: [
+                            createElement('span', { classes: ['el-checkbox__inner'] }),
+                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
+                          ],
+                        }),
+                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть панель слева' }),
+                      ],
+                      events: {
+                        mousedown: (e) => {
+                          if (e.button !== 0 || !disabled.hideLeftPanel) return;
+                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+
+                          const personalWrapper = qs('.personal-wrapper');
+                          const sideBar = qs('.side-bar');
+                          const playerBar = qs('.player-bar');
+                          const chatLists = qs('.chat-lists ');
+
+                          if (label.classList.contains('is-checked')) {
+                            label.classList.remove('is-checked');
+                            label.children[0].classList.remove('is-checked');
+
+                            personalWrapper.style.paddingLeft = '';
+                            chatLists.style.paddingRight = '';
+                            sideBar.style.display = '';
+                            playerBar.style.height = '';
+                            return;
+                          }
+                          label.classList.add('is-checked');
+                          label.children[0].classList.add('is-checked');
+
+                          personalWrapper.style.paddingLeft = '26px';
+                          chatLists.style.paddingRight = '0';
+                          sideBar.style.display = 'none';
+                          playerBar.style.height = 'calc((900vw - 4585px)/16)';
+                        },
+                      },
+                    }),
+                  ],
+                }),
+              ],
+            }),
+            createElement('h4', { text: 'Автоматизация' }),
+            createElement('div', {
+              classes: ['manage-list'],
+              childs: [
+                // Лайки
+                createElement('p', {
+                  childs: [
+                    createElement('label', {
+                      classes: ['el-checkbox', 'manage-item'],
+                      childs: [
+                        createElement('span', {
+                          classes: ['el-checkbox__input'],
+                          childs: [
+                            createElement('span', { classes: ['el-checkbox__inner'] }),
+                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
+                          ],
+                        }),
+                        createElement('span', { classes: ['el-checkbox__label'], text: 'Лайки' }),
+                      ],
+                      events: {
+                        mousedown: (e) => {
+                          if (e.button !== 0) return;
+                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+
+                          if (label.classList.contains('is-checked')) {
+                            label.classList.remove('is-checked');
+                            label.children[0].classList.remove('is-checked');
+
+                            clearInterval(likesInterval);
+                            return;
+                          }
+                          label.classList.add('is-checked');
+                          label.children[0].classList.add('is-checked');
+
+                          likesInterval = setInterval(() => document.querySelector('.like').click(), 1);
+                        },
+                      },
+                    }),
+                  ],
+                }),
+              ],
+            }),
+            createElement('h4', { text: 'Experimental' }),
+            createElement('div', {
+              classes: ['manage-list'],
+              childs: [
+                // Подсветка комментариев
                 createElement('p', {
                   childs: [
                     createElement('label', {
