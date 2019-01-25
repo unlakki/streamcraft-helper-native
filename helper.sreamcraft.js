@@ -10,9 +10,6 @@
 
 // eslint-disable-next-line func-names
 ((function () {
-  const chestList = [];
-  let chestInterval = null;
-  let chestLastError = '';
   let likesInterval = null;
   let commentsInterval = null;
 
