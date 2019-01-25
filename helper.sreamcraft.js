@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StreamCraft
 // @namespace    https://streamcraft.com/
-// @version      0.3
+// @version      0.4
 // @description  StreamCraft help script
 // @author       Anime-chan
 // @match        https://streamcraft.com/*
@@ -173,7 +173,7 @@
                     }),
                   ],
                 }),
-                // Анимация лайков
+                // Скрыть анимацию лайков
                 createElement('p', {
                   childs: [
                     createElement('label', {
@@ -186,7 +186,7 @@
                             createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
                           ],
                         }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Анимация лайков' }),
+                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть анимацию лайков' }),
                       ],
                       events: {
                         mousedown: (e) => {
