@@ -1,0 +1,25 @@
+{
+  "name": "helper.streamcraft",
+  "version": "1.0.0",
+  "description": "StreamCraft help script",
+  "main": "helper.sreamcraft.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ferisef/helper.streamcraft.git"
+  },
+  "author": "Anime-chan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ferisef/helper.streamcraft/issues"
+  },
+  "homepage": "https://github.com/Ferisef/helper.streamcraft#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.15.0"
+  }
+}

@@ -1,0 +1,2 @@
+# StreamCraft
+StreamCraft help script.
