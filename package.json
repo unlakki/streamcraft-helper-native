@@ -6,14 +6,14 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ferisef/helper.streamcraft.git"
+    "url": "git+https://github.com/Ferisef/streamcraft-helper-native.git"
   },
   "author": "アニメちゃん",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Ferisef/helper.streamcraft/issues"
+    "url": "https://github.com/Ferisef/streamcraft-helper-native/issues"
   },
-  "homepage": "https://github.com/Ferisef/helper.streamcraft#readme",
+  "homepage": "https://github.com/Ferisef/streamcraft-helper-native#readme",
   "dependencies": {},
   "devDependencies": {
     "eslint": "^5.12.1",
