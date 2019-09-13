@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StreamCraft Helper Native
 // @namespace    https://streamcraft.com/
-// @version      1.0.0
+// @version      1.0.1
 // @description  StreamCraft help script written in native javascript.
 // @author       アニメちゃん
 // @match        https://streamcraft.com/*
@@ -153,6 +153,7 @@
         style: {
           marginLeft: '7px',
           userSelect: 'none',
+          position: 'relative',
         },
         className: ['manage-im'],
         childList: [
