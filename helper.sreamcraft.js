@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StreamCraft Helper Native
 // @namespace    https://streamcraft.com/
-// @version      1.0.2
+// @version      1.0.3
 // @description  StreamCraft help script written in native javascript.
 // @author       アニメちゃん
 // @match        https://*.streamcraft.com/*
@@ -25,7 +25,7 @@
       style,
       childList,
       type,
-      innerTExt,
+      innerText,
       events,
     } = params;
 
@@ -39,8 +39,8 @@
       el.type = type;
     }
 
-    if (typeof innerTExt === 'string') {
-      el.innerText = innerTExt;
+    if (typeof innerText === 'string') {
+      el.innerText = innerText;
     }
 
     if (typeof className === 'object') {
@@ -171,7 +171,7 @@
             className: ['manage-bar'],
             childList: [
               createElement('h4', {
-                innerTExt: 'Настройки отображения',
+                innerText: 'Настройки отображения',
               }),
               createElement('div', {
                 className: ['manage-list'],
@@ -196,7 +196,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Режим кинотеатра',
+                            innerText: 'Режим кинотеатра',
                           }),
                         ],
                         events: {
@@ -251,7 +251,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Закрепить плеер',
+                            innerText: 'Закрепить плеер',
                           }),
                         ],
                         events: {
@@ -290,7 +290,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Скрыть анимацию лайков',
+                            innerText: 'Скрыть анимацию лайков',
                           }),
                         ],
                         events: {
@@ -331,7 +331,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Скрыть панель рейтинга и VIP',
+                            innerText: 'Скрыть панель рейтинга и VIP',
                           }),
                         ],
                         events: {
@@ -355,7 +355,7 @@
                 ],
               }),
               createElement('h4', {
-                innerTExt: 'Автоматизация',
+                innerText: 'Автоматизация',
               }),
               createElement('div', {
                 className: ['manage-list'],
@@ -380,7 +380,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Лайки',
+                            innerText: 'Лайки',
                           }),
                         ],
                         events: {
@@ -421,7 +421,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Сундуки',
+                            innerText: 'Сундуки',
                           }),
                         ],
                         events: {
@@ -448,7 +448,7 @@
                 ],
               }),
               createElement('h4', {
-                innerTExt: 'Experimental',
+                innerText: 'Experimental',
               }),
               createElement('div', {
                 className: ['manage-list'],
@@ -473,7 +473,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Подсветка комментариев',
+                            innerText: 'Подсветка комментариев',
                           }),
                         ],
                         events: {
@@ -524,7 +524,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerTExt: 'Убрать ограничения чата',
+                            innerText: 'Убрать ограничения чата',
                           }),
                         ],
                         events: {
