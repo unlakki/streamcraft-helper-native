@@ -1,416 +1,594 @@
 // ==UserScript==
-// @name         StreamCraft
+// @name         StreamCraft Helper Native
 // @namespace    https://streamcraft.com/
-// @version      0.4
-// @description  StreamCraft help script
-// @author       Anime-chan
+// @version      1.0.0
+// @description  StreamCraft help script written in native javascript.
+// @author       アニメちゃん
 // @match        https://streamcraft.com/*
 // @grant        none
 // ==/UserScript==
 
-// eslint-disable-next-line func-names
 ((function () {
-  let likesInterval = null;
-  let commentsInterval = null;
+  function observe(target, config, callback) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => callback(mutation, observer));
+    });
 
-  const disabled = { hideLeftPanel: false };
+    observer.observe(target, config);
+    return observer;
+  }
 
-  const qs = e => document.querySelector(e);
+  function createElement(tagName, params) {
+    const {
+      id,
+      className,
+      style,
+      childList,
+      type,
+      innerTExt,
+      events,
+    } = params;
 
-  function createElement(tag, attrs) {
-    const element = document.createElement(tag);
-    if (attrs.id) element.id = attrs.id;
-    if (attrs.text) element.innerText = attrs.text;
-    if (attrs.type) element.type = attrs.type;
-    if (typeof attrs.style === 'object') {
-      Object.keys(attrs.style).forEach((k) => {
-        element.style[k] = attrs.style[k];
+    const el = document.createElement(tagName);
+
+    if (typeof id === 'string') {
+      el.id = id;
+    }
+
+    if (typeof type === 'string') {
+      el.type = type;
+    }
+
+    if (typeof innerTExt === 'string') {
+      el.innerText = innerTExt;
+    }
+
+    if (typeof className === 'object') {
+      Object.values(className).forEach((classValue) => {
+        if (!classValue) {
+          return;
+        }
+
+        el.classList.add(classValue);
       });
     }
-    if (typeof attrs.classes === 'object') {
-      attrs.classes.forEach(c => element.classList.add(c));
+
+    if (typeof events === 'object') {
+      Object.entries(events).forEach(([name, event]) => {
+        el.addEventListener(name, event);
+      });
     }
-    if (typeof attrs.childs === 'object') {
-      attrs.childs.forEach(c => element.appendChild(c));
+
+    if (typeof childList === 'object') {
+      Object.values(childList).forEach((child) => {
+        el.appendChild(child);
+      });
     }
-    if (typeof attrs.events === 'object') {
-      Object.keys(attrs.events).forEach(k => element.addEventListener(k, attrs.events[k]));
+
+    if (typeof style === 'object') {
+      Object.entries(style).forEach(([name, styleValue]) => {
+        el.style[name] = styleValue;
+      });
     }
-    return element;
+
+    return el;
+  }
+
+  function toggle(event, on, off) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    const label = event.path.find(el => el.classList.contains('el-checkbox'));
+    if (label.classList.contains('is-checked')) {
+      label.classList.remove('is-checked');
+      label.childNodes[0].classList.remove('is-checked');
+
+      off();
+      return;
+    }
+
+    label.classList.add('is-checked');
+    label.childNodes[0].classList.add('is-checked');
+
+    on();
+  }
+
+  const LATENCY = 1;
+
+  let likeInterval;
+  let chestInterval;
+  let messagesObserver;
+
+  let isChatLimitCanceled = false;
+
+  for (let [key, value] of Object.entries(localStorage)) {
+    if (/room_/.test(key)) {
+      isChatLimitCanceled = JSON.parse(value).cfg.ChatConf.ChatContentLen === Number.MAX_SAFE_INTEGER;
+    }
   }
 
   document.body.appendChild(createElement('style', {
-    childs: [document.createTextNode([
-      '::-webkit-scrollbar { width: 0.47rem }',
+    childList: [document.createTextNode([
+      '::-webkit-scrollbar { width: 5px }',
       '::-webkit-scrollbar-track { background: #303031 }',
-      '::-webkit-scrollbar-thumb { background: #47474a; border-radius: 1.27rem }',
+      '::-webkit-scrollbar-thumb { background: #47474a }',
       '::-webkit-scrollbar-thumb:hover { background: #71767c }',
+      // Theatre mode
+      '.contaniner-fix { padding-top: 0 !important }',
+      '.header-fix { display: none !important }',
+      '.channel-sider-fix { top: 0 !important; width: 410px !important }',
+      '.chat-lists-fix { padding-right: 5px !important }',
+      '.room-wrapper-fix { padding-right: 410px !important }',
+      '.side-bar-fix { display: none !important }',
+      '.content-fix { margin-left: 0 !important }',
+      '.channel-fix { padding-top: 0 !important; height: 100vh; overflow: auto }',
     ].join('\n'))],
   }));
 
-  const loadingInterval = setInterval(() => {
-    if (!qs('.player-bar')) return;
-    clearInterval(loadingInterval);
+  observe(document.body, { childList: true, subtree: true }, (genaralMutation, generalObserver) => {
+    const { target } = genaralMutation;
 
-    const userscriptSettings = createElement('div', {
-      style: { left: '40px', userSelect: 'none' },
-      classes: ['manage-im'],
-      childs: [
-        createElement('i', {
-          style: {
-            width: '24px', height: '24px', backgroundImage: 'url(https://goo.gl/bX5c9N)', filter: 'invert(.25641)',
-          },
-          classes: ['icon'],
-        }),
-        createElement('div', {
-          id: 'userscript-settings',
-          style: { display: 'none' },
-          classes: ['manage-bar'],
-          childs: [
-            createElement('h4', { text: 'Настройки отображения' }),
-            createElement('div', {
-              classes: ['manage-list'],
-              childs: [
-                // Режим кинотеатра
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Режим кинотеатра' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+    const aboutStream = target.querySelector('.bulletin-board');
+    if (aboutStream) {
+      observe(aboutStream, { childList: true }, (mutation, observer) => {
+        observer.disconnect();
 
-                          const sideBar = qs('.side-bar');
-                          const header = qs('.header');
-                          const personalWrapper = qs('.personal-wrapper');
-                          const channel = qs('.channel');
-                          const contaniner = qs('.contaniner');
-                          const roomWrapper = qs('.room-wrapper');
-                          const channelSider = qs('.channel-sider');
-                          const playerBar = qs('.player-bar');
-                          const chatLists = qs('.chat-lists');
+        if (mutation.addedNodes.length > 0) {
+          const p = mutation.target.querySelector('p');
+          p.innerHTML = p.innerText;
+        }
+      });
+    }
 
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-                            disabled.hideLeftPanel = true;
+    const chatDialog = document.querySelector('.chat-dialog');
+    if (chatDialog) {
+      generalObserver.disconnect();
 
-                            sideBar.style.display = '';
-                            header.style.display = '';
-                            personalWrapper.style.paddingLeft = '';
-                            channel.style.paddingTop = '';
-                            contaniner.style.paddingTop = '';
-                            roomWrapper.style.paddingRight = '';
-                            channelSider.style.width = '';
-                            channelSider.style.top = '';
-                            playerBar.style.height = '';
-                            chatLists.style.paddingRight = '';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-                          disabled.hideLeftPanel = false;
+      if (chatDialog.querySelector('#userscript-settings')) {
+        return;
+      }
 
-                          sideBar.style.display = 'none';
-                          header.style.display = 'none';
-                          personalWrapper.style.paddingLeft = '0';
-                          channel.style.paddingTop = '0';
-                          contaniner.style.paddingTop = '0';
-                          roomWrapper.style.paddingRight = '400px';
-                          channelSider.style.width = '400px';
-                          channelSider.style.top = '0';
-                          playerBar.style.height = '100vh';
-                          chatLists.style.paddingRight = '0';
+      const userscriptSettings = createElement('div', {
+        style: {
+          marginLeft: '7px',
+          userSelect: 'none',
+        },
+        className: ['manage-im'],
+        childList: [
+          createElement('i', {
+            style: {
+              filter: 'invert(.25641)',
+            },
+            className: ['icon', 'set-icon'],
+          }),
+          createElement('div', {
+            id: 'userscript-settings',
+            style: {
+              display: 'none',
+            },
+            className: ['manage-bar'],
+            childList: [
+              createElement('h4', {
+                innerTExt: 'Настройки отображения',
+              }),
+              createElement('div', {
+                className: ['manage-list'],
+                childList: [
+                  // Режим кинотеатра
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item'],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input'],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Режим кинотеатра',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            const classList = [
+                              'contaniner',
+                              'header',
+                              'channel-sider',
+                              'chat-lists',
+                              'room-wrapper',
+                              'side-bar',
+                              'content',
+                              'channel',
+                              'channel',
+                            ];
+
+                            toggle(
+                              event,
+                              () => {
+                                classList.forEach((className) => {
+                                  document.querySelector(`.${className}`).classList.add(`${className}-fix`);
+                                });
+                              },
+                              () => {
+                                classList.forEach((className) => {
+                                  document.querySelector(`.${className}`).classList.remove(`${className}-fix`);
+                                });
+                              },
+                            );
+                          },
                         },
-                      },
-                    }),
-                  ],
-                }),
-                // Закрепить плеер
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Закрепить плеер' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            document.body.style.overflow = 'auto';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          document.body.style.overflow = 'hidden';
+                      }),
+                    ],
+                  }),
+                  // Закрепить плеер
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item'],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input'],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Закрепить плеер',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            toggle(
+                              event,
+                              () => {
+                                document.body.style.overflow = 'hidden';
+                              },
+                              () => {
+                                document.body.style.overflow = '';
+                              },
+                            );
+                          },
                         },
-                      },
-                    }),
-                  ],
-                }),
-                // Скрыть анимацию лайков
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть анимацию лайков' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+                      }),
+                    ],
+                  }),
+                  // Скрыть анимацию лайков
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item'],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input'],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Скрыть анимацию лайков',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            const hearts = document.querySelector('.hearts');
 
-                          const hearts = qs('.hearts');
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-                            disabled.hideLeftPanel = true;
-
-                            hearts.style.display = '';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-                          disabled.hideLeftPanel = false;
-
-                          hearts.style.display = 'none';
+                            toggle(
+                              event,
+                              () => {
+                                hearts.style.display = 'none';
+                              },
+                              () => {
+                                hearts.style.display = '';
+                              },
+                            );
+                          },
                         },
-                      },
-                    }),
-                  ],
-                }),
-                // Скрыть панель рейтинга и VIP
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть панель рейтинга и VIP' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+                      }),
+                    ],
+                  }),
+                  // Скрыть панель рейтинга и VIP
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item'],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input'],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Скрыть панель рейтинга и VIP',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            const panel = document.querySelector('.contribution-guard');
 
-                          const panel = qs('.contribution-guard');
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            panel.style.display = '';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          panel.style.display = 'none';
+                            toggle(
+                              event,
+                              () => {
+                                panel.style.display = 'none';
+                              },
+                              () => {
+                                panel.style.display = '';
+                              },
+                            );
+                          },
                         },
-                      },
-                    }),
-                  ],
-                }),
-                // Скрыть панель слева
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Скрыть панель слева' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0 || !disabled.hideLeftPanel) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
-
-                          const personalWrapper = qs('.personal-wrapper');
-                          const sideBar = qs('.side-bar');
-                          const playerBar = qs('.player-bar');
-                          const chatLists = qs('.chat-lists ');
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            personalWrapper.style.paddingLeft = '';
-                            chatLists.style.paddingRight = '';
-                            sideBar.style.display = '';
-                            playerBar.style.height = '';
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          personalWrapper.style.paddingLeft = '26px';
-                          chatLists.style.paddingRight = '0';
-                          sideBar.style.display = 'none';
-                          playerBar.style.height = 'calc((900vw - 4585px)/16)';
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+              createElement('h4', {
+                innerTExt: 'Автоматизация',
+              }),
+              createElement('div', {
+                className: ['manage-list'],
+                childList: [
+                  // Лайки
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item'],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input'],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Лайки',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            toggle(
+                              event,
+                              () => {
+                                likeInterval = setInterval(() => {
+                                  document.querySelector('.like').click();
+                                }, LATENCY);
+                              },
+                              () => {
+                                clearInterval(likeInterval);
+                              },
+                            );
+                          },
                         },
-                      },
-                    }),
-                  ],
-                }),
-              ],
-            }),
-            createElement('h4', { text: 'Автоматизация' }),
-            createElement('div', {
-              classes: ['manage-list'],
-              childs: [
-                // Лайки
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Лайки' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-
-                            clearInterval(likesInterval);
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-
-                          likesInterval = setInterval(() => document.querySelector('.like').click(), 1);
+                      }),
+                    ],
+                  }),
+                  // Сундуки
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item'],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input'],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Сундуки',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            toggle(
+                              event,
+                              () => {
+                                chestInterval = setInterval(() => {
+                                  const chest = document.querySelector('.new-chest-bar .chest-icon');
+                                  if (chest) {
+                                    chest.click();
+                                  }
+                                }, LATENCY);
+                              },
+                              () => {
+                                clearInterval(chestInterval);
+                              },
+                            );
+                          },
                         },
-                      },
-                    }),
-                  ],
-                }),
-              ],
-            }),
-            createElement('h4', { text: 'Experimental' }),
-            createElement('div', {
-              classes: ['manage-list'],
-              childs: [
-                // Подсветка комментариев
-                createElement('p', {
-                  childs: [
-                    createElement('label', {
-                      classes: ['el-checkbox', 'manage-item'],
-                      childs: [
-                        createElement('span', {
-                          classes: ['el-checkbox__input'],
-                          childs: [
-                            createElement('span', { classes: ['el-checkbox__inner'] }),
-                            createElement('input', { classes: ['el-checkbox__original'], type: 'checkbox' }),
-                          ],
-                        }),
-                        createElement('span', { classes: ['el-checkbox__label'], text: 'Подсветка комментариев' }),
-                      ],
-                      events: {
-                        mousedown: (e) => {
-                          if (e.button !== 0) return;
-                          const label = e.path.find(p => p.classList.contains('el-checkbox'));
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+              createElement('h4', {
+                innerTExt: 'Experimental',
+              }),
+              createElement('div', {
+                className: ['manage-list'],
+                childList: [
+                  // Подсветка комментариев
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item'],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input'],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Подсветка комментариев',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            toggle(
+                              event,
+                              () => {
+                                messagesObserver = new MutationObserver((mutations) => {
+                                  for (let mutation of mutations) {
+                                    const nickname = document.querySelector('.nick').innerText;
+                                
+                                    const [chatItem] = mutation.addedNodes;
+                                    const chatMsg = chatItem.querySelector('p span:last-child');
+                                    if (chatMsg && chatMsg.innerText.includes(nickname)) {
+                                      chatItem.style.backgroundColor = '#820d0d';
+                                    }
+                                  }
+                                });
 
-                          const nick = document.querySelector('.nick').innerText;
-
-                          if (label.classList.contains('is-checked')) {
-                            label.classList.remove('is-checked');
-                            label.children[0].classList.remove('is-checked');
-                            disabled.hideLeftPanel = true;
-
-                            clearInterval(commentsInterval);
-
-                            return;
-                          }
-                          label.classList.add('is-checked');
-                          label.children[0].classList.add('is-checked');
-                          disabled.hideLeftPanel = false;
-
-                          commentsInterval = setInterval(() => {
-                            document.querySelectorAll('.chat-list li div p').forEach((c) => {
-                              if (c.lastChild.innerText && c.lastChild.innerText.includes(nick)) {
-                                if (c.style.backgroundColor === '#820d0d') return;
-                                // eslint-disable-next-line no-param-reassign
-                                c.style.backgroundColor = '#820d0d';
-                              } else {
-                                // eslint-disable-next-line no-param-reassign
-                                c.style.backgroundColor = '';
-                              }
-                            });
-                          }, 500);
+                                messagesObserver.observe(document.getElementById('chatScreen'), { childList: true, subtree: true });
+                              },
+                              () => {
+                                messagesObserver.disconnect();
+                              },
+                            );
+                          },
                         },
-                      },
-                    }),
-                  ],
-                }),
-              ],
-            }),
-          ],
-        }),
-      ],
-    });
+                      }),
+                    ],
+                  }),
+                  // Ограничение чата
+                  createElement('p', {
+                    childList: [
+                      createElement('label', {
+                        className: ['el-checkbox', 'manage-item', isChatLimitCanceled ? 'is-checked' : ''],
+                        childList: [
+                          createElement('span', {
+                            className: ['el-checkbox__input', isChatLimitCanceled ? 'is-checked' : ''],
+                            childList: [
+                              createElement('span', {
+                                className: ['el-checkbox__inner'],
+                              }),
+                              createElement('input', {
+                                className: ['el-checkbox__original'],
+                                type: 'checkbox',
+                              }),
+                            ],
+                          }),
+                          createElement('span', {
+                            className: ['el-checkbox__label'],
+                            innerTExt: 'Убрать ограничения чата',
+                          }),
+                        ],
+                        events: {
+                          mousedown: (event) => {
+                            toggle(
+                              event,
+                              () => {
+                                for (let [key, value] of Object.entries(localStorage)) {
+                                  if (/room_/.test(key)) {
+                                    const json = JSON.parse(value);
+                                    localStorage.removeItem(key);
+                                    localStorage.setItem(key, JSON.stringify({
+                                      cfg: {
+                                        ...json.cfg,
+                                        ChatConf: {
+                                          ChatContentLen: Number.MAX_SAFE_INTEGER,
+                                          ChatInterval: 0,
+                                          ChatRepeatCount: Number.MAX_SAFE_INTEGER,
+                                        },
+                                      },
+                                    }));
+                                  }
+                                }
+                              },
+                              () => {
+                                for (let [key, value] of Object.entries(localStorage)) {
+                                  if (/room_/.test(key)) {
+                                    const json = JSON.parse(value);
+                                    localStorage.removeItem(key);
+                                    localStorage.setItem(key, JSON.stringify({
+                                      cfg: {
+                                        ...json.cfg,
+                                        ChatConf: {
+                                          ChatContentLen: 100,
+                                          ChatInterval: 3,
+                                          ChatRepeatCount: 3,
+                                        },
+                                      },
+                                    }));
+                                  }
+                                }
+                              },
+                            );
+                          },
+                        },
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      });
 
-    userscriptSettings.addEventListener('mousedown', (e) => {
-      if (e.button !== 0 || !e.target.classList.contains('icon')) return;
-      const us = qs('#userscript-settings');
-      us.style.display = us.style.display === 'none' ? '' : 'none';
-    });
+      userscriptSettings.addEventListener('mousedown', (event) => {
+        if (event.button !== 0 || !event.target.classList.contains('icon')) {
+          return;
+        }
 
-    qs('.chat-dialog').appendChild(userscriptSettings);
-  }, 500);
+        const settingsList = document.querySelector('#userscript-settings');
+        settingsList.style.display = settingsList.style.display === 'none' ? '' : 'none';
+      });
+
+      chatDialog.appendChild(userscriptSettings);
+    }
+  });
 })());
