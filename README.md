@@ -1,2 +1,2 @@
 # StreamCraft
-StreamCraft help script.
+StreamCraft help script written in native jsvascript.
