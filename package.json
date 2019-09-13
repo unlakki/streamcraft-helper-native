@@ -2,7 +2,7 @@
   "name": "streamcraft-helper-native",
   "version": "1.0.0",
   "description": "StreamCraft help script",
-  "main": "./sreamcraft.js",
+  "main": "./helper.sreamcraft.js",
   "scripts": {},
   "repository": {
     "type": "git",
