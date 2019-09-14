@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StreamCraft Helper Native
 // @namespace    https://streamcraft.com/
-// @version      1.0.3
+// @version      1.0.5
 // @description  StreamCraft help script written in native javascript.
 // @author       アニメちゃん
 // @match        https://*.streamcraft.com/*
@@ -529,6 +529,8 @@
                         ],
                         events: {
                           mousedown: (event) => {
+                            const chatTextarea = document.querySelector('.chat-dialog textarea');
+
                             toggle(
                               event,
                               () => {
@@ -548,6 +550,7 @@
                                     }));
                                   }
                                 }
+                                chatTextarea.removeAttribute('maxlength');
                               },
                               () => {
                                 for (let [key, value] of Object.entries(localStorage)) {
@@ -566,6 +569,7 @@
                                     }));
                                   }
                                 }
+                                chatTextarea.maxLength = 100;
                               },
                             );
                           },
