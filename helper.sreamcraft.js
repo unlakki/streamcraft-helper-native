@@ -482,9 +482,9 @@
                               event,
                               () => {
                                 messagesObserver = new MutationObserver((mutations) => {
+                                  const nickname = document.querySelector('.nick').innerText;
+
                                   for (let mutation of mutations) {
-                                    const nickname = document.querySelector('.nick').innerText;
-                                
                                     const [chatItem] = mutation.addedNodes;
                                     const chatMsg = chatItem.querySelector('p span:last-child');
                                     if (chatMsg && chatMsg.innerText.includes(nickname)) {
