@@ -171,7 +171,7 @@
             className: ['manage-bar'],
             childList: [
               createElement('h4', {
-                innerText: 'Настройки отображения',
+                innerText: 'Settings',
               }),
               createElement('div', {
                 className: ['manage-list'],
@@ -196,7 +196,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Режим кинотеатра',
+                            innerText: 'Theatre Mode',
                           }),
                         ],
                         events: {
@@ -251,7 +251,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Закрепить плеер',
+                            innerText: 'Freeze Player Position',
                           }),
                         ],
                         events: {
@@ -290,7 +290,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Скрыть анимацию лайков',
+                            innerText: 'Hide Likes Animation',
                           }),
                         ],
                         events: {
@@ -331,7 +331,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Скрыть панель рейтинга и VIP',
+                            innerText: 'Hide Contribution Guarg',
                           }),
                         ],
                         events: {
@@ -355,7 +355,7 @@
                 ],
               }),
               createElement('h4', {
-                innerText: 'Автоматизация',
+                innerText: 'Clickers',
               }),
               createElement('div', {
                 className: ['manage-list'],
@@ -380,7 +380,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Лайки',
+                            innerText: 'Like',
                           }),
                         ],
                         events: {
@@ -421,7 +421,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Сундуки',
+                            innerText: 'Chest',
                           }),
                         ],
                         events: {
@@ -473,7 +473,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Подсветка комментариев',
+                            innerText: 'Comments Highlight',
                           }),
                         ],
                         events: {
@@ -524,7 +524,7 @@
                           }),
                           createElement('span', {
                             className: ['el-checkbox__label'],
-                            innerText: 'Убрать ограничения чата',
+                            innerText: 'Remove Chat Limits',
                           }),
                         ],
                         events: {
