@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StreamCraft Helper Native
 // @namespace    https://streamcraft.com/
-// @version      1.0.5
+// @version      1.0.6
 // @description  StreamCraft help script written in native javascript.
 // @author       アニメちゃん
 // @match        https://*.streamcraft.com/*
@@ -209,7 +209,6 @@
                               'room-wrapper',
                               'side-bar',
                               'content',
-                              'channel',
                               'channel',
                             ];
 
