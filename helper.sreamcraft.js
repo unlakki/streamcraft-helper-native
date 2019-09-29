@@ -535,7 +535,7 @@
                               () => {
                                 for (let [key, value] of Object.entries(localStorage)) {
                                   if (/room_/.test(key)) {
-                                    const CHAT_MESSAGE_LENGTH = 16333;
+                                    const CHAT_MESSAGE_LENGTH = 16384;
                                     
                                     const json = JSON.parse(value);
                                     localStorage.removeItem(key);
@@ -551,7 +551,7 @@
                                     }));
                                   }
                                 }
-                                chatTextarea.removeAttribute('maxlength');
+                                chatTextarea.setAttribute('maxlength', CHAT_MESSAGE_LENGTH);
                               },
                               () => {
                                 for (let [key, value] of Object.entries(localStorage)) {
