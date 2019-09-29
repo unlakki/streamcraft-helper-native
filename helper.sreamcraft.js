@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StreamCraft Helper Native
 // @namespace    https://streamcraft.com/
-// @version      1.0.6
+// @version      1.0.8
 // @description  StreamCraft help script written in native javascript.
 // @author       アニメちゃん
 // @match        https://*.streamcraft.com/*
@@ -96,6 +96,8 @@
 
   const LATENCY = 1;
 
+  const CHAT_MESSAGE_LENGTH = 16384;
+
   let likeInterval;
   let chestInterval;
   let messagesObserver;
@@ -104,7 +106,7 @@
 
   for (let [key, value] of Object.entries(localStorage)) {
     if (/room_/.test(key)) {
-      isChatLimitCanceled = JSON.parse(value).cfg.ChatConf.ChatContentLen === Number.MAX_SAFE_INTEGER;
+      isChatLimitCanceled = JSON.parse(value).cfg.ChatConf.ChatContentLen === CHAT_MESSAGE_LENGTH;
     }
   }
 
@@ -535,8 +537,6 @@
                               () => {
                                 for (let [key, value] of Object.entries(localStorage)) {
                                   if (/room_/.test(key)) {
-                                    const CHAT_MESSAGE_LENGTH = 16384;
-                                    
                                     const json = JSON.parse(value);
                                     localStorage.removeItem(key);
                                     localStorage.setItem(key, JSON.stringify({
@@ -551,7 +551,7 @@
                                     }));
                                   }
                                 }
-                                chatTextarea.setAttribute('maxlength', CHAT_MESSAGE_LENGTH);
+                                chatTextarea.maxLength = CHAT_MESSAGE_LENGTH;
                               },
                               () => {
                                 for (let [key, value] of Object.entries(localStorage)) {
