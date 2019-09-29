@@ -535,15 +535,17 @@
                               () => {
                                 for (let [key, value] of Object.entries(localStorage)) {
                                   if (/room_/.test(key)) {
+                                    const CHAT_MESSAGE_LENGTH = 16333;
+                                    
                                     const json = JSON.parse(value);
                                     localStorage.removeItem(key);
                                     localStorage.setItem(key, JSON.stringify({
                                       cfg: {
                                         ...json.cfg,
                                         ChatConf: {
-                                          ChatContentLen: Number.MAX_SAFE_INTEGER,
+                                          ChatContentLen: CHAT_MESSAGE_LENGTH,
                                           ChatInterval: 0,
-                                          ChatRepeatCount: Number.MAX_SAFE_INTEGER,
+                                          ChatRepeatCount: CHAT_MESSAGE_LENGTH,
                                         },
                                       },
                                     }));
