@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StreamCraft Helper Native
 // @namespace    https://streamcraft.com/
-// @version      1.0.8
+// @version      1.0.9
 // @description  StreamCraft help script written in native javascript.
 // @author       アニメちゃん
 // @match        https://*.streamcraft.com/*
@@ -21,7 +21,7 @@
   function createElement(tagName, params) {
     const {
       id,
-      className,
+      classList,
       style,
       childList,
       type,
@@ -43,13 +43,13 @@
       el.innerText = innerText;
     }
 
-    if (typeof className === 'object') {
-      Object.values(className).forEach((classValue) => {
-        if (!classValue) {
+    if (typeof classList === 'object') {
+      Object.values(classList).forEach((className) => {
+        if (!className) {
           return;
         }
 
-        el.classList.add(classValue);
+        el.classList.add(className);
       });
     }
 
@@ -153,51 +153,50 @@
 
       const userscriptSettings = createElement('div', {
         style: {
-          marginLeft: '7px',
           userSelect: 'none',
           position: 'relative',
         },
-        className: ['manage-im'],
+        classList: ['manage-im'],
         childList: [
           createElement('i', {
             style: {
               filter: 'invert(.25641)',
             },
-            className: ['icon', 'set-icon'],
+            classList: ['icon', 'set-icon'],
           }),
           createElement('div', {
             id: 'userscript-settings',
             style: {
               display: 'none',
             },
-            className: ['manage-bar'],
+            classList: ['manage-bar'],
             childList: [
               createElement('h4', {
                 innerText: 'Settings',
               }),
               createElement('div', {
-                className: ['manage-list'],
+                classList: ['manage-list'],
                 childList: [
                   // Режим кинотеатра
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item'],
+                        classList: ['el-checkbox', 'manage-item'],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input'],
+                            classList: ['el-checkbox__input'],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Theatre Mode',
                           }),
                         ],
@@ -217,13 +216,13 @@
                             toggle(
                               event,
                               () => {
-                                classList.forEach((className) => {
-                                  document.querySelector(`.${className}`).classList.add(`${className}-fix`);
+                                classList.forEach((classList) => {
+                                  document.querySelector(`.${classList}`).classList.add(`${classList}-fix`);
                                 });
                               },
                               () => {
-                                classList.forEach((className) => {
-                                  document.querySelector(`.${className}`).classList.remove(`${className}-fix`);
+                                classList.forEach((classList) => {
+                                  document.querySelector(`.${classList}`).classList.remove(`${classList}-fix`);
                                 });
                               },
                             );
@@ -236,22 +235,22 @@
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item'],
+                        classList: ['el-checkbox', 'manage-item'],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input'],
+                            classList: ['el-checkbox__input'],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Freeze Player Position',
                           }),
                         ],
@@ -275,22 +274,22 @@
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item'],
+                        classList: ['el-checkbox', 'manage-item'],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input'],
+                            classList: ['el-checkbox__input'],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Hide Likes Animation',
                           }),
                         ],
@@ -316,22 +315,22 @@
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item'],
+                        classList: ['el-checkbox', 'manage-item'],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input'],
+                            classList: ['el-checkbox__input'],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Hide Contribution Guarg',
                           }),
                         ],
@@ -359,28 +358,28 @@
                 innerText: 'Clickers',
               }),
               createElement('div', {
-                className: ['manage-list'],
+                classList: ['manage-list'],
                 childList: [
                   // Лайки
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item'],
+                        classList: ['el-checkbox', 'manage-item'],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input'],
+                            classList: ['el-checkbox__input'],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Like',
                           }),
                         ],
@@ -406,22 +405,22 @@
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item'],
+                        classList: ['el-checkbox', 'manage-item'],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input'],
+                            classList: ['el-checkbox__input'],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Chest',
                           }),
                         ],
@@ -452,28 +451,28 @@
                 innerText: 'Experimental',
               }),
               createElement('div', {
-                className: ['manage-list'],
+                classList: ['manage-list'],
                 childList: [
                   // Подсветка комментариев
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item'],
+                        classList: ['el-checkbox', 'manage-item'],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input'],
+                            classList: ['el-checkbox__input'],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Comments Highlight',
                           }),
                         ],
@@ -509,22 +508,22 @@
                   createElement('p', {
                     childList: [
                       createElement('label', {
-                        className: ['el-checkbox', 'manage-item', isChatLimitCanceled ? 'is-checked' : ''],
+                        classList: ['el-checkbox', 'manage-item', isChatLimitCanceled ? 'is-checked' : ''],
                         childList: [
                           createElement('span', {
-                            className: ['el-checkbox__input', isChatLimitCanceled ? 'is-checked' : ''],
+                            classList: ['el-checkbox__input', isChatLimitCanceled ? 'is-checked' : ''],
                             childList: [
                               createElement('span', {
-                                className: ['el-checkbox__inner'],
+                                classList: ['el-checkbox__inner'],
                               }),
                               createElement('input', {
-                                className: ['el-checkbox__original'],
+                                classList: ['el-checkbox__original'],
                                 type: 'checkbox',
                               }),
                             ],
                           }),
                           createElement('span', {
-                            className: ['el-checkbox__label'],
+                            classList: ['el-checkbox__label'],
                             innerText: 'Remove Chat Limits',
                           }),
                         ],
