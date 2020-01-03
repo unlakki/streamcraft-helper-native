@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         StreamCraft Helper Native
-// @namespace    https://streamcraft.com/
+// @namespace    https://github.com/uwufule/
 // @version      1.0.9
 // @description  StreamCraft help script written in native javascript.
 // @author       アニメちゃん
