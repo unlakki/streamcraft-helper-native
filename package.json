@@ -1,7 +1,7 @@
 {
   "name": "streamcraft-helper-native",
   "version": "1.0.9",
-  "description": "StreamCraft help script",
+  "description": "StreamCraft help script.",
   "main": "script.js",
   "scripts": {},
   "repository": {
