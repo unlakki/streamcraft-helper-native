@@ -1,6 +1,6 @@
 {
   "name": "streamcraft-helper-native",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "description": "StreamCraft help script",
   "main": "script.js",
   "scripts": {},
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Ferisef/streamcraft-helper-native.git"
   },
   "author": "アニメちゃん",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Ferisef/streamcraft-helper-native/issues"
   },
